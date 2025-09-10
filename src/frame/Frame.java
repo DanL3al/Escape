@@ -13,6 +13,7 @@ public class Frame extends JFrame {
         this.setTitle("Escape");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
+        this.setResizable(false);
         this.setSize(new Dimension(width, height));
         this.setLocationRelativeTo(null);
         this.gp = new GamePanel(width,height);

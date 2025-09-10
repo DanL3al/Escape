@@ -1,15 +1,20 @@
 package frame;
 
+import handler.KeyHandler;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class GamePanel extends JPanel implements Runnable{
 
     private Thread thread;
+    private final KeyHandler keyH = new KeyHandler();
 
     public GamePanel(int width, int height){
         this.setBounds(0,0,width,height);
         this.setBackground(Color.green);
+        this.setFocusable(true);
+        this.addKeyListener(this.keyH);
     }
 
     public void startGameThread(){
@@ -36,7 +41,15 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
 
-    public void update(){}
+    public void update(){
+        if(keyH.isDown() || keyH.isLeft() || keyH.isRight() || keyH.isUp()){
+            System.out.println("FUNCIONANDO");
+        }
+    }
 
-    public void paintComponent(Graphics g){}
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g;
+        g2.dispose();
+    }
 }
