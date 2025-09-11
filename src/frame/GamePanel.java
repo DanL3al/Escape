@@ -49,7 +49,8 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     public void update(){
-        player.update(keyH.isUp(),keyH.isDown(),keyH.isLeft(),keyH.isRight());
+        player.update(keyH.isUp(),keyH.isDown(),keyH.isLeft(),keyH.isRight(), keyH.isePressed());
+        rm.update();
     }
 
     public void paintComponent(Graphics g){

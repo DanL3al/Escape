@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class RoomManager {
 
+    // Optimize the room, save the current in a variable then change the current room from the gp class
+
     Room[] rooms;
     int currentRoomNumber;
 
@@ -15,9 +17,12 @@ public class RoomManager {
 
     public void draw(Graphics2D g2, int panelWidth, int panelHeight){
         Room currentRoom = rooms[this.currentRoomNumber];
-        g2.setColor(currentRoom.getColor());
-        g2.fillRect(0,0,panelWidth,panelHeight);
-        currentRoom.getDoor().draw(g2);
+        currentRoom.draw(g2,panelWidth,panelHeight);
+    }
+
+    public void update(){
+        Room currentRoom = rooms[this.currentRoomNumber];
+        currentRoom.update();
     }
 
     private Room[] initRooms(){

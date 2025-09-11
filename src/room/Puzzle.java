@@ -6,8 +6,9 @@ import java.awt.event.ActionListener;
 
 public class Puzzle {
 
-    JFrame puzzleFrame;
-    JButton button;
+    private final JFrame puzzleFrame;
+    private final JButton button;
+    private boolean status = false;
 
     public Puzzle(){
         puzzleFrame = new JFrame("Puzzle");
@@ -22,12 +23,12 @@ public class Puzzle {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(e.getSource() == button){
+                    status = true;
                     puzzleFrame.dispose();
                 }
             }
         });
         puzzleFrame.add(button);
-
         int screenWidth  = java.awt.Toolkit.getDefaultToolkit().getScreenSize().width;
         int screenHeight = java.awt.Toolkit.getDefaultToolkit().getScreenSize().height;
 
@@ -37,18 +38,11 @@ public class Puzzle {
         x -= 300;
 
         puzzleFrame.setLocation(x, y);
-
-        puzzleFrame.setVisible(true);
-        //exclude();
+        //puzzleFrame.setVisible(true);
     }
 
-    /*private void exclude(){
-        Timer timer = new Timer(2000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                puzzleFrame.dispose();
-            }
-        });
-        timer.start();
-    }*/
+    public boolean isStatus() {
+        return status;
+    }
+
 }

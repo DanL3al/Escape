@@ -13,6 +13,16 @@ public class Room {
         this.color = color;
     }
 
+    public void draw(Graphics2D g2, int panelWidth, int panelHeight){
+        g2.setColor(this.color);
+        g2.fillRect(0,0,panelWidth,panelHeight);
+        door.draw(g2);
+    }
+
+    public void update(){
+        this.door.update();
+    }
+
     public Door getDoor() {
         return door;
     }

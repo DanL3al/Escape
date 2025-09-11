@@ -9,10 +9,12 @@ public class Door {
     private final int width;
     private final int height;
     private final Rectangle solidArea;
-    private boolean puzzleSolved;
-    //Puzzle puzzle
+    private final Handle handle;
+    private boolean open;
 
     public Door(){
+        this.handle = new Handle();
+        this.open = handle.getPuzzle().isStatus();
         this.height = 40;
         this.width = 40;
         this.x = 540;
@@ -25,15 +27,20 @@ public class Door {
         g2.fillRect(x,y,width,height);
         g2.setColor(Color.YELLOW);
         g2.drawRect(solidArea.x, solidArea.y,solidArea.width, solidArea.height);
+        handle.draw(g2);
+    }
+
+    public void update(){
+        this.open = handle.getPuzzle().isStatus();
+        if(open){
+            System.out.println("ABRIU A PORTA");
+        }
     }
 
     public Rectangle getSolidArea() {
         return solidArea;
     }
 
-    public boolean isPuzzleSolved() {
-        return puzzleSolved;
-    }
 
 
 }

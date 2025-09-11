@@ -15,6 +15,7 @@ public class Player {
     private String direction;
     private Rectangle solidArea;
     private boolean collidingWithDoor;
+    private boolean ePressed;
 
     public Player(GamePanel gp){
         this.x = 200;
@@ -25,7 +26,7 @@ public class Player {
         this.gp = gp;
     }
 
-    public void update(boolean up, boolean down, boolean left, boolean right){
+    public void update(boolean up, boolean down, boolean left, boolean right, boolean e){
         collidingWithDoor = false;
         checkCollision();
 
