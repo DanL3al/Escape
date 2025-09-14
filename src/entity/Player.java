@@ -27,6 +27,13 @@ public class Player {
     /*GAME LOGIC VARIABLES*/
     private boolean controllingRobot = false;
 
+    /*COLLISION VARIABLES*/
+    private Rectangle solidArea;
+    private boolean collisionWithDoor = false;
+    private int solidAreaDefaultX, solidAreaDefaultY;
+    private int solidAreaWidth, solidAreaHeight;
+
+
 
     public Player(GamePanel gp){
         setImages();
@@ -35,6 +42,7 @@ public class Player {
         this.speed = 3;
         this.direction = "down";
         this.gp = gp;
+        setSolidArea();
     }
 
     public void draw(Graphics2D g2){
@@ -73,12 +81,14 @@ public class Player {
                     }
                     break;
             }
+            g2.setColor(Color.black);
             g2.fillRect(0,0,gp.getTileSize(),gp.getTileSize());
             g2.drawImage(image,x,y,gp.getTileSize(),gp.getTileSize(),null);
         }
         /*Logic for drawing the player and pc while player not using the robot*/
         //TODO: IMPLEMENT IT WHEN THE SPRITE IS DONE
         else{
+            g2.setColor(Color.black);
             g2.fillRect(0,0,gp.getTileSize(),gp.getTileSize());
             g2.setColor(Color.YELLOW);
             g2.fillRect(x,y,gp.getTileSize(),gp.getTileSize());
@@ -86,6 +96,9 @@ public class Player {
     }
 
     public void update(boolean up, boolean down, boolean left, boolean right){
+
+        collisionWithDoor = false;
+        checkCollision();
 
 
         if(controllingRobot){
@@ -118,8 +131,18 @@ public class Player {
                 }
             }
         }
+    }
 
+    private void checkCollision(){
+        this.solidArea.x = x + gp.getTileSize() / 4;
+        this.solidArea.y = y + gp.getTileSize() / 4;
 
+        if(solidArea.intersects(gp.getRoomSolidArea())){
+            collisionWithDoor = true;
+        }
+
+        this.solidArea.x = solidAreaDefaultX;
+        this.solidArea.y = solidAreaDefaultY;
     }
 
 
@@ -139,6 +162,13 @@ public class Player {
         }
     }
 
+    private void setSolidArea(){
+        solidAreaDefaultX = 0;
+        solidAreaDefaultY = 0;
+        solidAreaWidth = 20;
+        solidAreaHeight = 20;
+        this.solidArea = new Rectangle(solidAreaDefaultX,solidAreaDefaultY,solidAreaWidth,solidAreaHeight);
+    }
 
 
     public int getX() {
@@ -151,6 +181,10 @@ public class Player {
 
     public int getSpeed() {
         return speed;
+    }
+
+    public boolean isCollisionWithDoor() {
+        return collisionWithDoor;
     }
 
     public String getDirection() {

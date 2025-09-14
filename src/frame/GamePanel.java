@@ -2,6 +2,7 @@ package frame;
 
 import entity.Player;
 import handler.KeyHandler;
+import room.Room;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,11 +22,14 @@ public class GamePanel extends JPanel implements Runnable{
     private Thread thread;
     private final KeyHandler keyH = new KeyHandler(this);
     private final Player player = new Player(this);
+    private final Room room = new Room(this);
 
     /*Game Logic Variables*/
     private int gameState;
     private final int controllingRobot = 1;
     private final int stealth = 2;
+
+
 
     public GamePanel(){
         this.gameState = stealth;
@@ -63,10 +67,19 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        room.draw(g2);
         player.draw(g2);
         g2.dispose();
     }
 
+
+    public Rectangle getRoomSolidArea(){
+        return room.getSolidArea();
+    }
+
+    public boolean isCollidingWithDoor(){
+        return player.isCollisionWithDoor();
+    }
     public void setGameState(int gameState) {
         this.gameState = gameState;
     }
@@ -86,4 +99,11 @@ public class GamePanel extends JPanel implements Runnable{
         player.setControllingRobot(controlling);
     }
 
+    public int getMaxCol() {
+        return maxCol;
+    }
+
+    public int getMaxRow() {
+        return maxRow;
+    }
 }

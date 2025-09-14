@@ -9,12 +9,10 @@ public class KeyHandler implements KeyListener {
 
     private final GamePanel gp;
     private boolean up,down,left,right;
-    private boolean ePressed;
 
     public KeyHandler(GamePanel gp){
         this.gp = gp;
     }
-
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -35,6 +33,10 @@ public class KeyHandler implements KeyListener {
             else if(e.getKeyCode() == KeyEvent.VK_E){
                 gp.setControllingRobot(false);
                 gp.setGameState(gp.getStealth());
+            }else if(e.getKeyCode() == KeyEvent.VK_T){
+                if(gp.isCollidingWithDoor()){
+                    //TODO: START THE PUZZLE
+                }
             }
         }
         /*Keys logic for stealth mode*/
