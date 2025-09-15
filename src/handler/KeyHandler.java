@@ -49,10 +49,14 @@ public class KeyHandler implements KeyListener {
         }
 
         /*Keys logic for solving puzzle*/
-
         else if(gp.getGameState() == gp.getSolvingPuzzle()){
             if(e.getKeyCode() == KeyEvent.VK_SPACE){
                 gp.setShieldUp(true);
+            }else if(e.getKeyCode() == KeyEvent.VK_W){
+                if(!gp.getShieldUp() && gp.getCookiesRemaining() > 0 && gp.robotCanThrow()){
+                    gp.createCookie();
+                    gp.setRobotCookiesRemaining();
+                }
             }
         }
 
@@ -79,11 +83,6 @@ public class KeyHandler implements KeyListener {
         else if(gp.getGameState() == gp.getSolvingPuzzle()){
             if(e.getKeyCode() == KeyEvent.VK_SPACE){
                 gp.setShieldUp(false);
-            }
-            else if(e.getKeyCode() == KeyEvent.VK_W){
-                if(!gp.getShieldUp()){
-                    gp.createCookie();
-                }
             }
         }
     }

@@ -15,6 +15,8 @@ public class UI {
     /*PUZZLE ONE VARIABLES*/
     private final BufferedImage cookieImage;
     private final BufferedImage shieldImage;
+    private final BufferedImage heartImage;
+    private BufferedImage heatImage;
     private final int puzzleOneX;
     private final int puzzleOneY;
     private final int puzzleOneWidth;
@@ -31,12 +33,15 @@ public class UI {
         this.puzzleOneY = gp.getTileSize() * 7;
         this.puzzleOneWidth = gp.getTileSize();
         this.puzzleOneHeight = gp.getTileSize();
+        this.heartImage = gp.getHeartImage();
+        this.heatImage = gp.getCurrentHeatImage();
         init();
     }
 
     public void draw(Graphics2D g2){
         BufferedImage currentImage = null;
         BufferedImage numberImage = null;
+        heatImage = gp.getCurrentHeatImage();
         switch (spriteNum){
             case  1 -> currentImage = wOne;
             case  2 -> currentImage = wTwo;
@@ -51,12 +56,20 @@ public class UI {
             case 5 -> numberImage = five;
             case 6 -> numberImage = six;
         }
+
+        g2.drawImage(heatImage, gp.getTileSize() * 4, gp.getTileSize(), puzzleOneWidth * 2,puzzleOneHeight * 2,null);
+
         g2.drawImage(currentImage,puzzleOneX,puzzleOneY,puzzleOneWidth * 2,puzzleOneHeight * 2,null);
         g2.drawImage(cookieImage,puzzleOneX + gp.getTileSize() * 2,puzzleOneY + 24,puzzleOneWidth,puzzleOneHeight,null);
         g2.drawImage(numberImage,puzzleOneX + gp.getTileSize() * 2 + 30, puzzleOneY + 24,puzzleOneWidth,puzzleOneHeight,null);
 
         g2.drawImage(space, puzzleOneX, puzzleOneY + gp.getTileSize(),puzzleOneWidth * 2,puzzleOneHeight * 2,null);
         g2.drawImage(shieldImage, puzzleOneX + gp.getTileSize() * 2, puzzleOneY + gp.getTileSize() + 26,puzzleOneWidth,puzzleOneHeight,null);
+
+        for(int i = 0; i < gp.getHealth(); i++){
+            g2.drawImage(heartImage, gp.getTileSize() * 6 +(i*20), gp.getHeight() - gp.getTileSize() * 2, puzzleOneWidth,puzzleOneHeight,null);
+        }
+
     }
 
     public void update(){

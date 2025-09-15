@@ -38,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable{
 
 
     public GamePanel(){
-        this.gameState = solvingPuzzle;
+        this.gameState = stealth;
         this.setBounds(0,0,screenWidth,screenHeight);
         this.setBackground(Color.green);
         this.setFocusable(true);
@@ -163,6 +163,35 @@ public class GamePanel extends JPanel implements Runnable{
 
     public int getCookiesRemaining(){
         return puzzleOne.getCookiesRemaining();
+    }
+
+    public boolean robotCanThrow(){
+        return puzzleOne.getRobotCanThrow();
+    }
+
+    public void setRobotCookiesRemaining(){
+        puzzleOne.setRobotCookiesRemaining();
+    }
+
+    public void setServerHeat(){
+        puzzleOne.setServerHeat();
+    }
+
+
+    public void setHealth(){
+        puzzleOne.setHealth();
+    }
+
+    public int getHealth(){
+        return puzzleOne.getHealth();
+    }
+
+    public BufferedImage getHeartImage(){
+        return puzzleOne.getHeart();
+    }
+
+    public BufferedImage getCurrentHeatImage(){
+        return puzzleOne.getCurrentHeatImage();
     }
 
 }

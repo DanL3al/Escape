@@ -14,6 +14,7 @@ public class PuzzleOne {
     private final GamePanel gp;
     private boolean puzzleStarted;
     private boolean puzzleSolved;
+    private boolean gameOver;
 
     private final Robot robot;
     private final CookieManager cookieManager;
@@ -37,6 +38,15 @@ public class PuzzleOne {
     }
 
     public void update(){
+        if(server.getHeat() >= server.getMaxHeat()){
+            this.puzzleSolved = true;
+            gp.setGameState(gp.getControllingRobot());
+        }
+        if(gp.getHealth() == 0){
+            this.puzzleSolved = false;
+            this.puzzleStarted = false;
+            gp.setGameState(gp.getControllingRobot());
+        }
         robot.update();
         server.update();
         cookieManager.update();
@@ -45,6 +55,10 @@ public class PuzzleOne {
 
     public void setShield(boolean shieldUp){
         robot.setShieldUp(shieldUp);
+    }
+
+    public int getCookiesRemaining(){
+        return robot.getCookiesRemaining();
     }
 
     public void createCookie(){
@@ -71,7 +85,45 @@ public class PuzzleOne {
         return server.getServerY();
     }
 
+    public BufferedImage getShieldImage(){
+        return robot.getShieldImage();
+    }
 
+    public BufferedImage getCookieImage(){
+        return cookieManager.getCookieImage();
+    }
+
+    public boolean getRobotCanThrow(){
+        return robot.isCanThrow();
+    }
+
+    public void setRobotCookiesRemaining(){
+        robot.setCookiesRemaining();
+    }
+
+    public int getServerHeat(){
+        return server.getHeat();
+    }
+
+    public void setServerHeat(){
+        server.setHeat();
+    }
+
+    public void setHealth(){
+        robot.setHealth();
+    }
+
+    public int getHealth(){
+        return robot.getHealth();
+    }
+
+    public BufferedImage getHeart(){
+        return robot.getHeart();
+    }
+
+    public BufferedImage getCurrentHeatImage(){
+        return server.getCurrentHeat();
+    }
 
 }
 
@@ -85,6 +137,7 @@ class Robot {
     private final int height;
 
     private BufferedImage robotImage,shieldOne,shieldTwo,shieldThree,shieldFour;
+    private BufferedImage heart;
 
     /*PUZZLE LOGIC VARIABLES*/
     private int spriteCounter = 1;
@@ -96,6 +149,7 @@ class Robot {
     private boolean canThrow;
     private boolean shieldUp = false;
     private final Rectangle solidArea;
+    private int health = 3;
 
     /*SHIELD VARIABLES*/
     private final int shieldX;
@@ -149,7 +203,7 @@ class Robot {
         }
         if(cookiesRemaining < maxCookies){
             cookieRechargeTimer++;
-            if(cookieRechargeTimer % 72 == 0){
+            if(cookieRechargeTimer % 58 == 0){
                 cookiesRemaining++;
             }
         }
@@ -176,9 +230,14 @@ class Robot {
             shieldTwo = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/shield-2.png")));
             shieldThree = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/shield-3.png")));
             shieldFour = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/shield-4.png")));
+            heart = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/heart.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setCookiesRemaining(){
+        this.cookiesRemaining--;
     }
 
 
@@ -197,6 +256,32 @@ class Robot {
     public boolean isShieldUp(){
         return shieldUp;
     }
+
+    public BufferedImage getShieldImage(){
+        return shieldOne;
+    }
+
+    public int getCookiesRemaining() {
+        return cookiesRemaining;
+    }
+
+    public boolean isCanThrow(){
+        return canThrow;
+    }
+
+    public void setHealth(){
+        health--;
+    }
+
+    public int getHealth(){
+        return health;
+    }
+
+    public BufferedImage getHeart() {
+        return heart;
+    }
+
+
 }
 
 class CookieManager{
@@ -282,6 +367,7 @@ class Cookie{
             y-=2;
             x-=2;
         }else{
+            gp.setServerHeat();
             deleted = true;
         }
     }
@@ -300,6 +386,7 @@ class Server{
 
     private int x,y,width,height;
     private BufferedImage serverOne,serverTwo,serverThree,serverFour;
+    private BufferedImage currentHeat, heatZero,heatOne,heatTwo,heatThree,heatFour;
 
     /*SERVER LOGIC VARIABLES*/
     private final Attack attack;
@@ -308,6 +395,8 @@ class Server{
     private int spriteNum = 1;
     private boolean preAttack = false;
     private boolean attacking = false;
+    private int heat = 0;
+    private final int maxHeat = 400;
 
     public Server(GamePanel gp){
         this.x = 0;
@@ -334,11 +423,23 @@ class Server{
     }
 
     public void update(){
+        if(heat < 80){
+            currentHeat = heatZero;
+        }else if(heat < 200){
+            currentHeat = heatOne;
+        }else if(heat < 280){
+            currentHeat = heatTwo;
+        }else if(heat < 360){
+            currentHeat = heatThree;
+        }else{
+            currentHeat = heatFour;
+        }
+
         attackTimer ++;
-        if(attackTimer == 120){
+        if(attackTimer == attack.getAttackCooldown() - 60){
             preAttack = true;
         }
-        if(attackTimer == 180){
+        if(attackTimer == attack.getAttackCooldown()){
             preAttack = false;
             attacking = true;
             attack.resetCoordinates();
@@ -376,6 +477,11 @@ class Server{
             serverTwo = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/server-2.png"));
             serverThree = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/server-3.png"));
             serverFour = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/server-4.png"));
+            heatZero = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/heat-zero.png"));
+            heatOne = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/heat-one.png"));
+            heatTwo = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/heat-two.png"));
+            heatThree = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/heat-three.png"));
+            heatFour = ImageIO.read(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/heat-four.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -387,6 +493,22 @@ class Server{
 
     public int getServerY(){
         return y + height - gp.getTileSize() * 2;
+    }
+
+    public int getHeat() {
+        return heat;
+    }
+
+    public void setHeat() {
+        this.heat += (int) (Math.random() * 10);
+    }
+
+    public int getMaxHeat(){
+        return maxHeat;
+    }
+
+    public BufferedImage getCurrentHeat() {
+        return currentHeat;
     }
 }
 
@@ -402,6 +524,8 @@ class Attack{
     boolean attackDone = false;
     private final Rectangle solidArea;
     private int defaultSolidAreaX, defaultSolidAreaY;
+    private int attackCooldown;
+    private final int[] cooldowns = new int[]{180,68,120,80,90,140};
 
 
     public Attack(GamePanel gp){
@@ -418,8 +542,8 @@ class Attack{
     public void update(){
         checkCollision();
         if(x < 600 && y < 600){
-            x += 6;
-            y += 6;
+            x += 8;
+            y += 8;
         }else{
             attackDone = true;
         }
@@ -434,6 +558,9 @@ class Attack{
         x = initialX;
         y = initialY;
         attackDone = false;
+
+        attackCooldown = cooldowns[(int)(Math.random() * cooldowns.length)];
+
         int random = (int) (Math.random()*3);
         if(random == 0){
             currentImage = attackOne;
@@ -454,9 +581,9 @@ class Attack{
             }
         }
         else{
-            //TODO: IMPLEMENT ROBOT-ATTACK COLLISION
             if(solidArea.intersects(gp.getRobotArea())){
                 this.attackDone = true;
+                gp.setHealth();
             }
         }
 
@@ -473,5 +600,9 @@ class Attack{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public int getAttackCooldown() {
+        return attackCooldown;
     }
 }
