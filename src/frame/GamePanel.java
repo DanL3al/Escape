@@ -3,10 +3,12 @@ package frame;
 import puzzle.PuzzleOne;
 import entity.Player;
 import handler.KeyHandler;
+import puzzle.UI;
 import room.Room;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable{
 
@@ -25,6 +27,7 @@ public class GamePanel extends JPanel implements Runnable{
     private final Player player = new Player(this);
     private final Room room = new Room(this);
     private final PuzzleOne puzzleOne = new PuzzleOne(this);
+    private final UI ui = new UI(this);
 
     /*Game Logic Variables*/
     private int gameState;
@@ -35,7 +38,7 @@ public class GamePanel extends JPanel implements Runnable{
 
 
     public GamePanel(){
-        this.gameState = stealth;
+        this.gameState = solvingPuzzle;
         this.setBounds(0,0,screenWidth,screenHeight);
         this.setBackground(Color.green);
         this.setFocusable(true);
@@ -66,16 +69,17 @@ public class GamePanel extends JPanel implements Runnable{
     public void update(){
         if(gameState == solvingPuzzle){
             puzzleOne.update();
+            ui.update();
         }else{
             player.update(keyH.isUp(),keyH.isDown(),keyH.isLeft(),keyH.isRight());
         }
-
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         if(gameState == solvingPuzzle){
             puzzleOne.draw(g2);
+            ui.draw(g2);
         }else{
             room.draw(g2);
             player.draw(g2);
@@ -147,6 +151,18 @@ public class GamePanel extends JPanel implements Runnable{
     }
     public int getServerY(){
         return puzzleOne.getServerY();
+    }
+
+    public BufferedImage getCookieImage(){
+        return puzzleOne.getCookieImage();
+    }
+
+    public BufferedImage getShieldImage(){
+        return puzzleOne.getShieldImage();
+    }
+
+    public int getCookiesRemaining(){
+        return puzzleOne.getCookiesRemaining();
     }
 
 }
