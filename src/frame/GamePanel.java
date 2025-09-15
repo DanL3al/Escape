@@ -34,6 +34,7 @@ public class GamePanel extends JPanel implements Runnable{
     private final int controllingRobot = 1;
     private final int stealth = 2;
     private final int solvingPuzzle = 3;
+    private final int showingPuzzleObjective = 4;
 
 
 
@@ -70,14 +71,20 @@ public class GamePanel extends JPanel implements Runnable{
         if(gameState == solvingPuzzle){
             puzzleOne.update();
             ui.update();
-        }else{
+        }else if(gameState == showingPuzzleObjective){
+            ui.update();
+        }
+        else{
             player.update(keyH.isUp(),keyH.isDown(),keyH.isLeft(),keyH.isRight());
         }
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        if(gameState == solvingPuzzle){
+        if(gameState == showingPuzzleObjective){
+            ui.robotServerBlackScreenDraw(g2);
+        }
+        else if(gameState == solvingPuzzle){
             puzzleOne.draw(g2);
             ui.draw(g2);
         }else{
@@ -87,7 +94,7 @@ public class GamePanel extends JPanel implements Runnable{
         g2.dispose();
     }
 
-
+    /*MAIN LOGIC GETTERS AND SETTERS*/
     public Rectangle getRoomSolidArea(){
         return room.getSolidArea();
     }
@@ -110,88 +117,74 @@ public class GamePanel extends JPanel implements Runnable{
     public int getSolvingPuzzle() {
         return solvingPuzzle;
     }
+    public int getShowingPuzzleObjective() {
+        return showingPuzzleObjective;
+    }
     public int getTileSize() {
         return tileSize;
     }
-
     public void setControllingRobot(boolean controlling){
         player.setControllingRobot(controlling);
     }
-
     public int getMaxCol() {
         return maxCol;
     }
-
     public int getMaxRow() {
         return maxRow;
     }
 
+    /*ROBOT VS SERVER PUZZLE VARIABLES*/
     public void setShieldUp(boolean shieldUp){
         puzzleOne.setShield(shieldUp);
     }
-
     public boolean getShieldUp(){
         return puzzleOne.isShieldUp();
     }
-
     public void createCookie(){
         puzzleOne.createCookie();
     }
-
     public Rectangle getRobotShieldArea(){
         return puzzleOne.robotShieldArea();
     }
-
     public Rectangle getRobotArea(){
         return puzzleOne.robotArea();
     }
-
     public int getServerX(){
         return puzzleOne.getServerX();
     }
     public int getServerY(){
         return puzzleOne.getServerY();
     }
-
     public BufferedImage getCookieImage(){
         return puzzleOne.getCookieImage();
     }
-
     public BufferedImage getShieldImage(){
         return puzzleOne.getShieldImage();
     }
-
     public int getCookiesRemaining(){
         return puzzleOne.getCookiesRemaining();
     }
-
     public boolean robotCanThrow(){
         return puzzleOne.getRobotCanThrow();
     }
-
     public void setRobotCookiesRemaining(){
         puzzleOne.setRobotCookiesRemaining();
     }
-
     public void setServerHeat(){
         puzzleOne.setServerHeat();
     }
-
-
     public void setHealth(){
         puzzleOne.setHealth();
     }
-
     public int getHealth(){
         return puzzleOne.getHealth();
     }
-
     public BufferedImage getHeartImage(){
         return puzzleOne.getHeart();
     }
-
     public BufferedImage getCurrentHeatImage(){
         return puzzleOne.getCurrentHeatImage();
     }
+
 
 }

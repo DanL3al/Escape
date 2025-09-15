@@ -12,7 +12,15 @@ public class UI {
 
     private final GamePanel gp;
 
-    /*PUZZLE ONE VARIABLES*/
+    /*ROBOT VS SERVER VARIABLES*/
+
+    /*INITIAL BLACK SCREEN VARIABLES*/
+    String text = "Sobrecarregue o servidor com cookies indesejados";
+    StringBuilder current = new StringBuilder();
+    int i = 0;
+    int timer = 0;
+    int changeStateTimer = 0;
+
     private final BufferedImage cookieImage;
     private final BufferedImage shieldImage;
     private final BufferedImage heartImage;
@@ -36,6 +44,13 @@ public class UI {
         this.heartImage = gp.getHeartImage();
         this.heatImage = gp.getCurrentHeatImage();
         init();
+    }
+
+    public void robotServerBlackScreenDraw(Graphics2D g2){
+        g2.setColor(Color.black);
+        g2.fillRect(0,0,gp.getWidth(),gp.getHeight());
+        g2.setColor(Color.WHITE);
+        g2.drawString(String.valueOf(current), gp.getTileSize() * 3,gp.getMaxCol() * gp.getTileSize() / 2);
     }
 
     public void draw(Graphics2D g2){
@@ -70,20 +85,44 @@ public class UI {
             g2.drawImage(heartImage, gp.getTileSize() * 6 +(i*20), gp.getHeight() - gp.getTileSize() * 2, puzzleOneWidth,puzzleOneHeight,null);
         }
 
+
     }
 
     public void update(){
-        spriteCounter++;
-        if(spriteCounter > 12){
-            if(spriteNum == 1){
-                spriteNum = 2;
-            }else if(spriteNum == 2){
-                spriteNum = 3;
-            } else{
-                spriteNum = 1;
+        if(gp.getGameState() == gp.getShowingPuzzleObjective()){
+            if(i < text.length()){
+                timer++;
+            }else{
+                changeStateTimer++;
+                if(changeStateTimer == 80){
+                    current.deleteCharAt(i - 1);
+                    gp.setGameState(gp.getSolvingPuzzle());
+                }
             }
-            spriteCounter = 0;
+            if(timer % 7 == 0){
+                if(i < text.length()){
+                    if(!current.isEmpty()){
+                        current.deleteCharAt(i);
+                    }
+                    current.append(text.charAt(i));
+                    current.append("_");
+                    i++;
+                }
+            }
+        }else{
+            spriteCounter++;
+            if(spriteCounter > 12){
+                if(spriteNum == 1){
+                    spriteNum = 2;
+                }else if(spriteNum == 2){
+                    spriteNum = 3;
+                } else{
+                    spriteNum = 1;
+                }
+                spriteCounter = 0;
+            }
         }
+
     }
 
     private void init(){

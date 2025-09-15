@@ -36,7 +36,7 @@ public class KeyHandler implements KeyListener {
             }
             else if(e.getKeyCode() == KeyEvent.VK_T){
                 if(gp.isCollidingWithDoor()){
-                    gp.setGameState(gp.getSolvingPuzzle());
+                    gp.setGameState(gp.getShowingPuzzleObjective());
                 }
             }
         }

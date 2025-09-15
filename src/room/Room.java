@@ -6,9 +6,6 @@ import java.awt.*;
 
 public class Room {
 
-
-    //character hover over a place,and it opens a puzzle
-    //each room has it's unique puzzle
     private final GamePanel gp;
     private Rectangle solidArea;
 
