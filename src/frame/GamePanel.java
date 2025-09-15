@@ -1,5 +1,6 @@
 package frame;
 
+import puzzle.PuzzleOne;
 import entity.Player;
 import handler.KeyHandler;
 import room.Room;
@@ -23,11 +24,13 @@ public class GamePanel extends JPanel implements Runnable{
     private final KeyHandler keyH = new KeyHandler(this);
     private final Player player = new Player(this);
     private final Room room = new Room(this);
+    private final PuzzleOne puzzleOne = new PuzzleOne(this);
 
     /*Game Logic Variables*/
     private int gameState;
     private final int controllingRobot = 1;
     private final int stealth = 2;
+    private final int solvingPuzzle = 3;
 
 
 
@@ -61,14 +64,22 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
     public void update(){
-        player.update(keyH.isUp(),keyH.isDown(),keyH.isLeft(),keyH.isRight());
+        if(gameState == solvingPuzzle){
+            puzzleOne.update();
+        }else{
+            player.update(keyH.isUp(),keyH.isDown(),keyH.isLeft(),keyH.isRight());
+        }
 
     }
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        room.draw(g2);
-        player.draw(g2);
+        if(gameState == solvingPuzzle){
+            puzzleOne.draw(g2);
+        }else{
+            room.draw(g2);
+            player.draw(g2);
+        }
         g2.dispose();
     }
 
@@ -92,9 +103,13 @@ public class GamePanel extends JPanel implements Runnable{
     public int getStealth() {
         return stealth;
     }
+    public int getSolvingPuzzle() {
+        return solvingPuzzle;
+    }
     public int getTileSize() {
         return tileSize;
     }
+
     public void setControllingRobot(boolean controlling){
         player.setControllingRobot(controlling);
     }
@@ -106,4 +121,32 @@ public class GamePanel extends JPanel implements Runnable{
     public int getMaxRow() {
         return maxRow;
     }
+
+    public void setShieldUp(boolean shieldUp){
+        puzzleOne.setShield(shieldUp);
+    }
+
+    public boolean getShieldUp(){
+        return puzzleOne.isShieldUp();
+    }
+
+    public void createCookie(){
+        puzzleOne.createCookie();
+    }
+
+    public Rectangle getRobotShieldArea(){
+        return puzzleOne.robotShieldArea();
+    }
+
+    public Rectangle getRobotArea(){
+        return puzzleOne.robotArea();
+    }
+
+    public int getServerX(){
+        return puzzleOne.getServerX();
+    }
+    public int getServerY(){
+        return puzzleOne.getServerY();
+    }
+
 }

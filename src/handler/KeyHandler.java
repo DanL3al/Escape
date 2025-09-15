@@ -33,9 +33,10 @@ public class KeyHandler implements KeyListener {
             else if(e.getKeyCode() == KeyEvent.VK_E){
                 gp.setControllingRobot(false);
                 gp.setGameState(gp.getStealth());
-            }else if(e.getKeyCode() == KeyEvent.VK_T){
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_T){
                 if(gp.isCollidingWithDoor()){
-                    //TODO: START THE PUZZLE
+                    gp.setGameState(gp.getSolvingPuzzle());
                 }
             }
         }
@@ -44,6 +45,14 @@ public class KeyHandler implements KeyListener {
             if(e.getKeyCode() == KeyEvent.VK_E){
                 gp.setGameState(gp.getControllingRobot());
                 gp.setControllingRobot(true);
+            }
+        }
+
+        /*Keys logic for solving puzzle*/
+
+        else if(gp.getGameState() == gp.getSolvingPuzzle()){
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                gp.setShieldUp(true);
             }
         }
 
@@ -64,6 +73,17 @@ public class KeyHandler implements KeyListener {
             }
             else if(e.getKeyCode() == KeyEvent.VK_D){
                 right = false;
+            }
+        }
+        /*Keys logic for solving puzzle*/
+        else if(gp.getGameState() == gp.getSolvingPuzzle()){
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                gp.setShieldUp(false);
+            }
+            else if(e.getKeyCode() == KeyEvent.VK_W){
+                if(!gp.getShieldUp()){
+                    gp.createCookie();
+                }
             }
         }
     }
