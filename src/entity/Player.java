@@ -22,7 +22,11 @@ public class Player {
     private int spriteCounter;
     private int currentSprite = 1;
     private BufferedImage up1,up2,down1,down2,left1,left2,right1,right2;
-    private BufferedImage deactivated;
+    private BufferedImage deactivatedUp,deactivatedDown, deactivatedLeft,deactivatedRight;
+    private BufferedImage computerOn, computerOff;
+    //if controlling player, this variable will save the pc deactivated and draw it, else it will draw the robot int the
+    //ground
+    private BufferedImage currentDeactivated;
 
     /*GAME LOGIC VARIABLES*/
     private boolean controllingRobot = false;
@@ -49,6 +53,7 @@ public class Player {
 
         /*Logic for drawing the robot's movement*/
         if(controllingRobot){
+            currentDeactivated = computerOff;
             BufferedImage image = null;
 
             switch (direction){
@@ -81,17 +86,13 @@ public class Player {
                     }
                     break;
             }
-            g2.setColor(Color.black);
-            g2.fillRect(0,0,gp.getTileSize(),gp.getTileSize());
+            g2.drawImage(currentDeactivated,0,0,gp.getTileSize(),gp.getTileSize(),null);
             g2.drawImage(image,x,y,gp.getTileSize(),gp.getTileSize(),null);
         }
         /*Logic for drawing the player and pc while player not using the robot*/
-        //TODO: IMPLEMENT IT WHEN THE SPRITE IS DONE
         else{
-            g2.setColor(Color.black);
-            g2.fillRect(0,0,gp.getTileSize(),gp.getTileSize());
-            g2.setColor(Color.YELLOW);
-            g2.fillRect(x,y,gp.getTileSize(),gp.getTileSize());
+            g2.drawImage(computerOn,0,0,gp.getTileSize(),gp.getTileSize(),null);
+            g2.drawImage(currentDeactivated,x,y,gp.getTileSize(),gp.getTileSize(),null);
         }
     }
 
@@ -131,6 +132,14 @@ public class Player {
                 }
             }
         }
+        else{
+            switch (direction){
+                case "up" -> currentDeactivated = deactivatedUp;
+                case "down" -> currentDeactivated = deactivatedDown;
+                case "left" -> currentDeactivated = deactivatedLeft;
+                case "right" -> currentDeactivated = deactivatedRight;
+            }
+        }
     }
 
     private void checkCollision(){
@@ -156,7 +165,12 @@ public class Player {
             left2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/left-2.png"));
             right1 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/right-1.png"));
             right2 = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/right-2.png"));
-            deactivated = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated.png"));
+            deactivatedUp = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated-up.png"));
+            deactivatedDown = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated-left.png"));
+            deactivatedLeft = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated-left.png"));
+            deactivatedRight = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated-right.png"));
+            computerOn = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/computer-on.png"));
+            computerOff = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/computer-off.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
