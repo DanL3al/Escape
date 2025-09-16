@@ -45,6 +45,26 @@ public class KeyHandler implements KeyListener {
             if(e.getKeyCode() == KeyEvent.VK_E){
                 gp.setGameState(gp.getControllingRobot());
                 gp.setControllingRobot(true);
+                if(!gp.isSwitchedForTheFirstTime()){
+                    gp.setSwitchedForTheFirstTime(true);
+                }
+            }
+        }
+
+        /*Keys logic for start of the game*/
+        else if(gp.getGameState() == gp.getGameStarted()){
+            if(e.getKeyCode() == KeyEvent.VK_T){
+                if(gp.isShowedFirstDialogue()){
+                    gp.setGameState(gp.getStealth());
+                    gp.setCanDraw();
+                }
+            }
+        }
+
+        /*Keys logic for dialogue mode*/
+        else if(gp.getGameState() == gp.getInteracting()){
+            if(e.getKeyCode() == KeyEvent.VK_T){
+                gp.setGameState(gp.getControllingRobot());
             }
         }
 

@@ -1,6 +1,7 @@
 package entity;
 
 import frame.GamePanel;
+import tutorialButtons.E;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -30,6 +31,7 @@ public class Player {
 
     /*GAME LOGIC VARIABLES*/
     private boolean controllingRobot = false;
+    private final E E;
 
     /*COLLISION VARIABLES*/
     private Rectangle solidArea;
@@ -47,9 +49,14 @@ public class Player {
         this.direction = "down";
         this.gp = gp;
         setSolidArea();
+        E = new E(gp);
     }
 
     public void draw(Graphics2D g2){
+
+        if(!gp.isSwitchedForTheFirstTime() && gp.isCanDraw()){
+            E.draw(g2,x,y);
+        }
 
         /*Logic for drawing the robot's movement*/
         if(controllingRobot){
@@ -90,6 +97,7 @@ public class Player {
             g2.drawImage(image,x,y,gp.getTileSize(),gp.getTileSize(),null);
         }
         /*Logic for drawing the player and pc while player not using the robot*/
+        //TODO: Change it in the future, each room will have a different object for it to go stealth
         else{
             g2.drawImage(computerOn,0,0,gp.getTileSize(),gp.getTileSize(),null);
             g2.drawImage(currentDeactivated,x,y,gp.getTileSize(),gp.getTileSize(),null);
@@ -97,6 +105,10 @@ public class Player {
     }
 
     public void update(boolean up, boolean down, boolean left, boolean right){
+
+        if(!gp.isSwitchedForTheFirstTime() && gp.isCanDraw()){
+            E.update();
+        }
 
         collisionWithDoor = false;
         checkCollision();

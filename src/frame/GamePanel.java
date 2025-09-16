@@ -1,10 +1,12 @@
 package frame;
 
+import dialogue.Dialogue;
 import puzzle.PuzzleOne;
 import entity.Player;
 import handler.KeyHandler;
 import puzzle.UI;
 import room.Room;
+import tile.TileManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,18 +30,29 @@ public class GamePanel extends JPanel implements Runnable{
     private final Room room = new Room(this);
     private final PuzzleOne puzzleOne = new PuzzleOne(this);
     private final UI ui = new UI(this);
+    private final Dialogue dialogue = new Dialogue(this);
+    private final TileManager tileManager = new TileManager(this);
 
     /*Game Logic Variables*/
     private int gameState;
     private final int controllingRobot = 1;
+    private final int gameStarted = 6;
     private final int stealth = 2;
     private final int solvingPuzzle = 3;
     private final int showingPuzzleObjective = 4;
+    private final int interacting = 5;
+
+    private boolean showedFirstDialogue;
+    private boolean switchedForTheFirstTime = false;
+    private boolean canDraw = false;
+
+    /*Game Logic Timers*/
+    private int gameStartedTimer = 0;
 
 
 
     public GamePanel(){
-        this.gameState = stealth;
+        this.gameState = gameStarted;
         this.setBounds(0,0,screenWidth,screenHeight);
         this.setBackground(Color.green);
         this.setFocusable(true);
@@ -68,6 +81,9 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
     public void update(){
+        if(gameState == gameStarted){
+            gameStartedTimer++;
+        }
         if(gameState == solvingPuzzle){
             puzzleOne.update();
             ui.update();
@@ -81,13 +97,28 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        if(gameState == showingPuzzleObjective){
+        if(gameState == gameStarted){
+            tileManager.draw(g2);
+            player.draw(g2);
+            if (gameStartedTimer >= 60) {
+                ui.drawDialogue(g2);
+                showedFirstDialogue = true;
+            }
+        }
+        else if(gameState == showingPuzzleObjective){
             ui.robotServerBlackScreenDraw(g2);
         }
         else if(gameState == solvingPuzzle){
             puzzleOne.draw(g2);
             ui.draw(g2);
-        }else{
+        }else if(gameState == interacting){
+            tileManager.draw(g2);
+            room.draw(g2);
+            player.draw(g2);
+            ui.drawDialogue(g2);
+        }
+        else{
+            tileManager.draw(g2);
             room.draw(g2);
             player.draw(g2);
         }
@@ -97,6 +128,38 @@ public class GamePanel extends JPanel implements Runnable{
     /*MAIN LOGIC GETTERS AND SETTERS*/
     public Rectangle getRoomSolidArea(){
         return room.getSolidArea();
+    }
+
+    public String getCurrentDialogue(){
+        return dialogue.getCurrentDialogueText();
+    }
+
+    public int getInteracting() {
+        return interacting;
+    }
+
+    public void setSwitchedForTheFirstTime(boolean switchedForTheFirstTime) {
+        this.switchedForTheFirstTime = switchedForTheFirstTime;
+    }
+
+    public void setCanDraw() {
+        this.canDraw = true;
+    }
+
+    public boolean isCanDraw() {
+        return canDraw;
+    }
+
+    public boolean isShowedFirstDialogue() {
+        return showedFirstDialogue;
+    }
+
+    public boolean isSwitchedForTheFirstTime() {
+        return switchedForTheFirstTime;
+    }
+
+    public int getGameStarted() {
+        return gameStarted;
     }
 
     public boolean isCollidingWithDoor(){

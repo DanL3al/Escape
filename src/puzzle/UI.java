@@ -12,15 +12,22 @@ public class UI {
 
     private final GamePanel gp;
 
-    /*ROBOT VS SERVER VARIABLES*/
+    //DIALOGUES VARIABLES
+    private BufferedImage talkIconOne, talkIconPc;
 
-    /*INITIAL BLACK SCREEN VARIABLES*/
-    String text = "Sobrecarregue o servidor com cookies indesejados";
+    private final Color opaqueBlack = new Color(0,0,0,220);
+    private final Color borderColor = new Color(255,255,255);
+
+
+
+    /*INITIAL BLACK SCREEN BEFORE PUZZLE VARIABLES*/
+    String text = "Sobrecarregue o servidor com cookies indesejados"; //TODO: CHANGE IT TO GET FROM PUZZLE
     StringBuilder current = new StringBuilder();
     int i = 0;
     int timer = 0;
     int changeStateTimer = 0;
 
+    /*ROBOT VS SERVER VARIABLES*/
     private final BufferedImage cookieImage;
     private final BufferedImage shieldImage;
     private final BufferedImage heartImage;
@@ -32,6 +39,8 @@ public class UI {
     private BufferedImage space,wOne,wTwo,wThree,zero,one,two,three,four,five,six;
     int spriteNum = 1;
     int spriteCounter = 0;
+
+
 
     public UI(GamePanel gp){
         this.gp = gp;
@@ -95,7 +104,6 @@ public class UI {
             }else{
                 changeStateTimer++;
                 if(changeStateTimer == 80){
-                    current.deleteCharAt(i - 1);
                     gp.setGameState(gp.getSolvingPuzzle());
                 }
             }
@@ -125,8 +133,69 @@ public class UI {
 
     }
 
+    public void drawDialogue(Graphics2D g2){
+
+        int opaqueScreenX = 0;
+        int opaqueScreenY = gp.getHeight() - gp.getTileSize() * 4 + 8;
+        int opaqueScreenWidth = gp.getWidth() - gp.getTileSize() + (gp.getTileSize() / 3 * 2);
+        int opaqueScreenHeight = gp.getHeight() - (gp.getHeight() - gp.getTileSize() * 4) - gp.getTileSize();
+
+        int borderX = 0;
+        int borderY = gp.getHeight() - gp.getTileSize() * 4 + 8;
+        int borderWidth = gp.getWidth() - gp.getTileSize() + (gp.getTileSize() / 3 * 2);
+        int borderHeight = gp.getHeight() - (gp.getHeight() - gp.getTileSize() * 4) - gp.getTileSize();
+
+        g2.setColor(opaqueBlack);
+        g2.fillRoundRect(opaqueScreenX,opaqueScreenY,opaqueScreenWidth,opaqueScreenHeight,35,35);
+
+        g2.setColor(borderColor);
+        g2.setStroke(new BasicStroke(6));
+        g2.drawRoundRect(borderX,borderY,borderWidth,borderHeight,25,25);
+
+        int iconX = 10;
+        int iconY = (opaqueScreenY + opaqueScreenHeight) / 2 + gp.getTileSize() * 3 + (gp.getTileSize() / 3);
+        int iconWidth = gp.getTileSize();
+        int iconHeight = gp.getTileSize();
+
+        int stringX = 72;
+        int stringY = gp.getHeight() - gp.getTileSize() * 3;
+
+
+        g2.drawImage(talkIconPc,iconX,iconY,iconWidth,iconHeight,null);
+        String teste = modifyString(gp.getCurrentDialogue());
+        for(String line : teste.split("\n")){
+            g2.drawString(line,stringX,stringY);
+            stringY += 18;
+        }
+
+        g2.drawString("aperte t", gp.getHeight() - gp.getTileSize() * 2, gp.getWidth() - gp.getTileSize());
+
+
+    }
+
+    private String modifyString(String s){
+        if(s.length() < 72){
+            return s;
+        }
+        StringBuilder formattedString = new StringBuilder();
+        for (int j = 72; j < s.length(); j += 72) {
+            String firstPart = s.substring(0,j);
+            String breakLine = "\n";
+            String lastPart = s.substring(72);
+            formattedString.append(firstPart);
+            formattedString.append(breakLine);
+            formattedString.append(lastPart);
+        }
+        return String.valueOf(formattedString);
+    }
+
     private void init(){
         try{
+            //TALK ICON IMAGES
+            talkIconOne = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("talkIconAssets/talk-icon-1.png")));
+            talkIconPc = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("talkIconAssets/talk-icon-pc.png")));
+
+            //SERVER PUZZLE IMAGES
             space = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/space.png")));
             wOne = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/w-1.png")));
             wTwo = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/w-2.png")));
