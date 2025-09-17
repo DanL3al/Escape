@@ -33,21 +33,26 @@ public class KeyHandler implements KeyListener {
             else if(e.getKeyCode() == KeyEvent.VK_E){
                 gp.setControllingRobot(false);
                 gp.setGameState(gp.getStealth());
+                resetCoordinates();
             }
             else if(e.getKeyCode() == KeyEvent.VK_T){
                 if(gp.isCollidingWithDoor()){
                     gp.setGameState(gp.getShowingPuzzleObjective());
+                }if(gp.playerCollidingWithHorrorGame()){
+                    gp.setGameState(gp.getSolvingHorrorPuzzle());
                 }
             }
         }
         /*Keys logic for stealth mode*/
         else if(gp.getGameState() == gp.getStealth()){
             if(e.getKeyCode() == KeyEvent.VK_E){
+                resetCoordinates();
                 gp.setGameState(gp.getControllingRobot());
                 gp.setControllingRobot(true);
                 if(!gp.isSwitchedForTheFirstTime()){
                     gp.setSwitchedForTheFirstTime(true);
                 }
+
             }
         }
 
@@ -68,7 +73,7 @@ public class KeyHandler implements KeyListener {
             }
         }
 
-        /*Keys logic for solving puzzle*/
+        /*Keys logic for solving server puzzle*/
         else if(gp.getGameState() == gp.getSolvingPuzzle()){
             if(e.getKeyCode() == KeyEvent.VK_SPACE){
                 gp.setShieldUp(true);
@@ -80,6 +85,14 @@ public class KeyHandler implements KeyListener {
             }
         }
 
+        /*Keys Logic for solving Horror Puzzle*/
+        else if(gp.getGameState() == gp.getSolvingHorrorPuzzle()){
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                gp.setFlashlight(true);
+            }if(e.getKeyCode() == KeyEvent.VK_W){
+                gp.setWalking(true);
+            }
+        }
 
     }
 
@@ -105,6 +118,15 @@ public class KeyHandler implements KeyListener {
                 gp.setShieldUp(false);
             }
         }
+
+        else if(gp.getGameState() == gp.getSolvingHorrorPuzzle()){
+            if(e.getKeyCode() == KeyEvent.VK_SPACE){
+                gp.setFlashlight(false);
+            }
+            if(e.getKeyCode() == KeyEvent.VK_W){
+                gp.setWalking(false);
+            }
+        }
     }
 
     @Override
@@ -124,6 +146,13 @@ public class KeyHandler implements KeyListener {
 
     public boolean isRight() {
         return right;
+    }
+
+    public void resetCoordinates(){
+        this.right = false;
+        this.left = false;
+        this.up = false;
+        this.down = false;
     }
 
 

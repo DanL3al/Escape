@@ -24,7 +24,7 @@ public class Player {
     private int currentSprite = 1;
     private BufferedImage up1,up2,down1,down2,left1,left2,right1,right2;
     private BufferedImage deactivatedUp,deactivatedDown, deactivatedLeft,deactivatedRight;
-    private BufferedImage computerOn, computerOff;
+
     //if controlling player, this variable will save the pc deactivated and draw it, else it will draw the robot int the
     //ground
     private BufferedImage currentDeactivated;
@@ -35,6 +35,9 @@ public class Player {
 
     /*COLLISION VARIABLES*/
     private Rectangle solidArea;
+
+    private boolean collisionWithHorrorGame = false;
+
     private boolean collisionWithDoor = false;
     private int solidAreaDefaultX, solidAreaDefaultY;
     private int solidAreaWidth, solidAreaHeight;
@@ -60,7 +63,6 @@ public class Player {
 
         /*Logic for drawing the robot's movement*/
         if(controllingRobot){
-            currentDeactivated = computerOff;
             BufferedImage image = null;
 
             switch (direction){
@@ -93,13 +95,9 @@ public class Player {
                     }
                     break;
             }
-            g2.drawImage(currentDeactivated,0,0,gp.getTileSize(),gp.getTileSize(),null);
             g2.drawImage(image,x,y,gp.getTileSize(),gp.getTileSize(),null);
         }
-        /*Logic for drawing the player and pc while player not using the robot*/
-        //TODO: Change it in the future, each room will have a different object for it to go stealth
         else{
-            g2.drawImage(computerOn,0,0,gp.getTileSize(),gp.getTileSize(),null);
             g2.drawImage(currentDeactivated,x,y,gp.getTileSize(),gp.getTileSize(),null);
         }
     }
@@ -110,6 +108,7 @@ public class Player {
             E.update();
         }
 
+        collisionWithHorrorGame = false;
         collisionWithDoor = false;
         checkCollision();
 
@@ -160,6 +159,8 @@ public class Player {
 
         if(solidArea.intersects(gp.getRoomSolidArea())){
             collisionWithDoor = true;
+        }if(solidArea.intersects(gp.getHorrorPuzzleCollision())){
+            collisionWithHorrorGame = true;
         }
 
         this.solidArea.x = solidAreaDefaultX;
@@ -181,8 +182,6 @@ public class Player {
             deactivatedDown = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated-left.png"));
             deactivatedLeft = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated-left.png"));
             deactivatedRight = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/deactivated-right.png"));
-            computerOn = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/computer-on.png"));
-            computerOff = ImageIO.read(getClass().getClassLoader().getResourceAsStream("playerAssets/computer-off.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -195,6 +194,8 @@ public class Player {
         solidAreaHeight = 20;
         this.solidArea = new Rectangle(solidAreaDefaultX,solidAreaDefaultY,solidAreaWidth,solidAreaHeight);
     }
+
+
 
 
     public int getX() {
@@ -223,5 +224,9 @@ public class Player {
 
     public boolean isControllingRobot() {
         return controllingRobot;
+    }
+
+    public boolean isCollisionWithHorrorGame() {
+        return collisionWithHorrorGame;
     }
 }

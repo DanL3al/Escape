@@ -8,12 +8,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Objects;
 
 public class TileManager {
 
     private final GamePanel gp;
-    private Tile[] tiles = new Tile[3];
-    private int[][] mapTileNum;
+    private final Tile[] doorClosedControlling = new Tile[144];
+    private final Tile[] doorClosedStealth = new Tile[144];
+    private final Tile[] doorOpenControlling = new Tile[144];
+    private final int[][] mapTileNum;
 
     public TileManager(GamePanel gp){
         this.gp = gp;
@@ -28,8 +31,17 @@ public class TileManager {
         int x = 0;
         int y = 0;
 
+
+        Tile[] current;
+
+        if(gp.getGameState() == gp.getGameStarted() || gp.getGameState() == gp.getStealth()){
+            current = doorClosedStealth;
+        }else{
+            current = doorClosedControlling;
+        }
+
         while(col < gp.getMaxCol() && row < gp.getMaxRow()){
-            g2.drawImage(tiles[mapTileNum[col][row]].getImage(),x,y,gp.getTileSize(),gp.getTileSize(),null);
+            g2.drawImage(current[mapTileNum[col][row]].getImage(),x,y,gp.getTileSize(),gp.getTileSize(),null);
             col++;
             x+=gp.getTileSize();
 
@@ -43,18 +55,38 @@ public class TileManager {
     }
 
     public void startImages(){
-        try{
-            tiles[0] = new Tile(true,true,true);
-            tiles[0].setImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileAssets/escape-door.png")));
-
-            tiles[1] = new Tile(false,false,false);
-            tiles[1].setImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileAssets/ground.png")));
-
-            tiles[2] = new Tile(true,true,false);
-            tiles[2].setImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("tileAssets/puzzle-door.png")));
-        }catch (IOException e){
-            e.printStackTrace();
+        for (int i = 0; i < doorClosedControlling.length; i++) {
+            try {
+                doorClosedControlling[i] = new Tile();
+                doorClosedControlling[i].setImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("tileAssets/doorClosedControlling/" + (i + 1) + ".png"))));
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
+
+        setCollisionOn(doorClosedControlling);
+
+        for (int i = 0; i < doorClosedStealth.length; i++) {
+            try {
+                doorClosedStealth[i] = new Tile();
+                doorClosedStealth[i].setImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("tileAssets/doorClosedStealth/" + (i + 1) + ".png"))));
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        setCollisionOn(doorClosedStealth);
+
+        for (int i = 0; i < doorOpenControlling.length; i++) {
+            try {
+                doorOpenControlling[i] = new Tile();
+                doorOpenControlling[i].setImage(ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("tileAssets/doorOpenControlling/" + (i + 1) + ".png"))));
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        setCollisionOn(doorOpenControlling);
     }
 
     public void loadMap(){
@@ -82,5 +114,25 @@ public class TileManager {
         }
     }
 
+    public void setCollisionOn(Tile[] tiles){
+        for (int i = 0; i < 24; i++) {
+            tiles[i].setCollision(true);
+        }
 
+        for(int i = 0; i < 132; i += 12){
+            tiles[i].setCollision(true);
+        }
+
+        for(int i = 11; i < 144; i += 12){
+            tiles[i].setCollision(true);
+        }
+    }
+
+    public boolean getDoorClosedControlling(int tilNum) {
+        return doorClosedControlling[tilNum].isCollision();
+    }
+
+    public int getMapTileNum(int col, int row){
+        return mapTileNum[col][row];
+    }
 }

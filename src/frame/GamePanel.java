@@ -1,11 +1,13 @@
 package frame;
 
 import dialogue.Dialogue;
+import puzzle.HorrorPuzzle;
 import puzzle.PuzzleOne;
 import entity.Player;
 import handler.KeyHandler;
 import puzzle.UI;
 import room.Room;
+import tile.Tile;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -32,6 +34,7 @@ public class GamePanel extends JPanel implements Runnable{
     private final UI ui = new UI(this);
     private final Dialogue dialogue = new Dialogue(this);
     private final TileManager tileManager = new TileManager(this);
+    private final HorrorPuzzle horrorPuzzle = new HorrorPuzzle(this);
 
     /*Game Logic Variables*/
     private int gameState;
@@ -41,6 +44,8 @@ public class GamePanel extends JPanel implements Runnable{
     private final int solvingPuzzle = 3;
     private final int showingPuzzleObjective = 4;
     private final int interacting = 5;
+
+    private final int solvingHorrorPuzzle = 7;
 
     private boolean showedFirstDialogue;
     private boolean switchedForTheFirstTime = false;
@@ -53,7 +58,8 @@ public class GamePanel extends JPanel implements Runnable{
 
     public GamePanel(){
         this.gameState = gameStarted;
-        this.setBounds(0,0,screenWidth,screenHeight);
+        this.setPreferredSize(new Dimension(screenWidth,screenHeight));
+        System.out.println(screenWidth);
         this.setBackground(Color.green);
         this.setFocusable(true);
         this.addKeyListener(this.keyH);
@@ -84,10 +90,13 @@ public class GamePanel extends JPanel implements Runnable{
         if(gameState == gameStarted){
             gameStartedTimer++;
         }
-        if(gameState == solvingPuzzle){
+        else if(gameState == solvingPuzzle){
             puzzleOne.update();
             ui.update();
-        }else if(gameState == showingPuzzleObjective){
+        }else if(gameState == solvingHorrorPuzzle){
+            horrorPuzzle.update();
+        }
+        else if(gameState == showingPuzzleObjective){
             ui.update();
         }
         else{
@@ -108,6 +117,9 @@ public class GamePanel extends JPanel implements Runnable{
         else if(gameState == showingPuzzleObjective){
             ui.robotServerBlackScreenDraw(g2);
         }
+        else if(gameState == solvingHorrorPuzzle){
+            horrorPuzzle.draw(g2);
+        }
         else if(gameState == solvingPuzzle){
             puzzleOne.draw(g2);
             ui.draw(g2);
@@ -120,7 +132,11 @@ public class GamePanel extends JPanel implements Runnable{
         else{
             tileManager.draw(g2);
             room.draw(g2);
+            if(!horrorPuzzle.isGameWon()){
+                horrorPuzzle.drawRectangle(g2);
+            }
             player.draw(g2);
+
         }
         g2.dispose();
     }
@@ -154,6 +170,11 @@ public class GamePanel extends JPanel implements Runnable{
         return showedFirstDialogue;
     }
 
+    public boolean getTile(int num){
+        return tileManager.getDoorClosedControlling(num);
+    }
+
+
     public boolean isSwitchedForTheFirstTime() {
         return switchedForTheFirstTime;
     }
@@ -183,6 +204,11 @@ public class GamePanel extends JPanel implements Runnable{
     public int getShowingPuzzleObjective() {
         return showingPuzzleObjective;
     }
+
+    public int getSolvingHorrorPuzzle() {
+        return solvingHorrorPuzzle;
+    }
+
     public int getTileSize() {
         return tileSize;
     }
@@ -247,6 +273,31 @@ public class GamePanel extends JPanel implements Runnable{
     }
     public BufferedImage getCurrentHeatImage(){
         return puzzleOne.getCurrentHeatImage();
+    }
+
+    /*Horror puzzle getters and setters*/
+    public void setFlashlight(boolean on){
+        horrorPuzzle.setFlashlightOn(on);
+    }
+
+    public boolean isFlashlightOn(){
+        return horrorPuzzle.isFlashlightOn();
+    }
+
+    public void setWalking(boolean walking){
+        horrorPuzzle.setWalking(walking);
+    }
+
+    public Rectangle getHorrorPuzzleCollision(){
+        return horrorPuzzle.getSolidArea();
+    }
+
+    public boolean playerCollidingWithHorrorGame(){
+        return player.isCollisionWithHorrorGame();
+    }
+
+    public int getMapTileNum(int col, int row) {
+        return tileManager.getMapTileNum(col,row);
     }
 
 

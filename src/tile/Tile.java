@@ -6,25 +6,13 @@ public class Tile {
 
     private BufferedImage image;
     private boolean collision = false;
-    private boolean isDoor = false;
-    private boolean isEscapeDoor = false;
-    private boolean open = false;
 
-    public Tile(boolean collision, boolean isDoor, boolean isEscapeDoor){
-        setTileInfo(collision,isDoor,isEscapeDoor);
+
+    public Tile(){
     }
 
-    public void setTileInfo(boolean collision, boolean isDoor, boolean isEscapeDoor) {
+    public void setCollision(boolean collision) {
         this.collision = collision;
-        if(isDoor){
-            this.isDoor = true;
-        }
-        if(isEscapeDoor){
-            this.isEscapeDoor = true;
-        }
-        if(isDoor || isEscapeDoor){
-            this.collision = true;
-        }
     }
 
     public void setImage(BufferedImage image) {
@@ -37,21 +25,5 @@ public class Tile {
 
     public boolean isCollision() {
         return collision;
-    }
-
-    public boolean isDoor() {
-        return isDoor;
-    }
-
-    public boolean isEscapeDoor() {
-        return isEscapeDoor;
-    }
-
-    public boolean isOpen() {
-        return open;
-    }
-
-    public void setOpen(boolean open) {
-        this.open = open;
     }
 }
