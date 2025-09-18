@@ -7,7 +7,6 @@ import entity.Player;
 import handler.KeyHandler;
 import puzzle.UI;
 import room.Room;
-import tile.Tile;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -44,7 +43,6 @@ public class GamePanel extends JPanel implements Runnable{
     private final int solvingPuzzle = 3;
     private final int showingPuzzleObjective = 4;
     private final int interacting = 5;
-
     private final int solvingHorrorPuzzle = 7;
 
     private boolean showedFirstDialogue;
@@ -59,7 +57,6 @@ public class GamePanel extends JPanel implements Runnable{
     public GamePanel(){
         this.gameState = gameStarted;
         this.setPreferredSize(new Dimension(screenWidth,screenHeight));
-        System.out.println(screenWidth);
         this.setBackground(Color.green);
         this.setFocusable(true);
         this.addKeyListener(this.keyH);
@@ -294,6 +291,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     public boolean playerCollidingWithHorrorGame(){
         return player.isCollisionWithHorrorGame();
+    }
+
+    public boolean isHorrorGameWon(){
+        return horrorPuzzle.isGameWon();
     }
 
     public int getMapTileNum(int col, int row) {

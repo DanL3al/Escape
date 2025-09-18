@@ -39,7 +39,9 @@ public class KeyHandler implements KeyListener {
                 if(gp.isCollidingWithDoor()){
                     gp.setGameState(gp.getShowingPuzzleObjective());
                 }if(gp.playerCollidingWithHorrorGame()){
-                    gp.setGameState(gp.getSolvingHorrorPuzzle());
+                    if(!gp.isHorrorGameWon()){
+                        gp.setGameState(gp.getSolvingHorrorPuzzle());
+                    }
                 }
             }
         }

@@ -156,15 +156,16 @@ public class HorrorPuzzle {
             jumpscareTimer++;
             if(jumpscareTimer >= 60){
                 state = jumpscare;
-                endingTimer++;
-                if(endingTimer >= 90){
-                    gameLost = true;
-                    gp.setGameState(gp.getControllingRobot());
-                }
             }
         }
 
         if(state == jumpscare){
+            endingTimer++;
+            if(endingTimer >= 90){
+                gameLost = true;
+                gp.setGameState(gp.getControllingRobot());
+                resetGame();
+            }
             spriteCounter++;
             if(spriteCounter >= 4){
                 if(currentSprite == 1){
@@ -194,6 +195,14 @@ public class HorrorPuzzle {
             flashLightSpriteCounter = 0;
         }
 
+    }
+
+    private void resetGame(){
+        foundRobot = false;
+        walking = false;
+        canWatch = true;
+        startDelay = false;
+        state = playing;
     }
 
 
