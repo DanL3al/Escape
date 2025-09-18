@@ -1,11 +1,13 @@
 package frame;
 
 import dialogue.Dialogue;
+import handler.MouseHandler;
 import puzzle.HorrorPuzzle;
 import puzzle.PuzzleOne;
 import entity.Player;
 import handler.KeyHandler;
 import puzzle.UI;
+import puzzle.labyrinth.Labyrinth;
 import room.Room;
 import tile.TileManager;
 
@@ -34,6 +36,9 @@ public class GamePanel extends JPanel implements Runnable{
     private final Dialogue dialogue = new Dialogue(this);
     private final TileManager tileManager = new TileManager(this);
     private final HorrorPuzzle horrorPuzzle = new HorrorPuzzle(this);
+    private final Labyrinth labyrinth = new Labyrinth(this);
+    private final MouseHandler mouseHandler = new MouseHandler(this);
+
 
     /*Game Logic Variables*/
     private int gameState;
@@ -44,13 +49,17 @@ public class GamePanel extends JPanel implements Runnable{
     private final int showingPuzzleObjective = 4;
     private final int interacting = 5;
     private final int solvingHorrorPuzzle = 7;
+    private final int solvingLabyrinth = 8;
 
     private boolean showedFirstDialogue;
     private boolean switchedForTheFirstTime = false;
     private boolean canDraw = false;
+    private boolean doorOpen = false;
 
     /*Game Logic Timers*/
     private int gameStartedTimer = 0;
+
+    private int keys = 0;
 
 
 
@@ -60,6 +69,7 @@ public class GamePanel extends JPanel implements Runnable{
         this.setBackground(Color.green);
         this.setFocusable(true);
         this.addKeyListener(this.keyH);
+        this.addMouseListener(this.mouseHandler);
     }
     public void startGameThread(){
         this.thread = new Thread(this);
@@ -86,6 +96,8 @@ public class GamePanel extends JPanel implements Runnable{
     public void update(){
         if(gameState == gameStarted){
             gameStartedTimer++;
+        }else if(gameState == solvingLabyrinth){
+            labyrinth.update();
         }
         else if(gameState == solvingPuzzle){
             puzzleOne.update();
@@ -103,6 +115,9 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
+        if(keys == 3){
+            doorOpen = true;
+        }
         if(gameState == gameStarted){
             tileManager.draw(g2);
             player.draw(g2);
@@ -110,6 +125,9 @@ public class GamePanel extends JPanel implements Runnable{
                 ui.drawDialogue(g2);
                 showedFirstDialogue = true;
             }
+        }
+        else if(gameState == solvingLabyrinth){
+            labyrinth.draw(g2);
         }
         else if(gameState == showingPuzzleObjective){
             ui.robotServerBlackScreenDraw(g2);
@@ -122,16 +140,12 @@ public class GamePanel extends JPanel implements Runnable{
             ui.draw(g2);
         }else if(gameState == interacting){
             tileManager.draw(g2);
-            room.draw(g2);
             player.draw(g2);
             ui.drawDialogue(g2);
         }
         else{
             tileManager.draw(g2);
-            room.draw(g2);
-            if(!horrorPuzzle.isGameWon()){
-                horrorPuzzle.drawRectangle(g2);
-            }
+            ui.drawHandle(g2);
             player.draw(g2);
 
         }
@@ -139,9 +153,17 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     /*MAIN LOGIC GETTERS AND SETTERS*/
-    public Rectangle getRoomSolidArea(){
-        return room.getSolidArea();
+    public Rectangle getServerPuzzleSolidArea(){
+        return room.getServerSolidArea();
     }
+
+    public boolean isDoorOpen() {
+        return doorOpen;
+    }
+
+    public Rectangle getHorrorPuzzleSolidArea(){return room.getHorrorGameSolidArea();}
+    public Rectangle getLabyrinthSolidArea(){return room.getLabyrinthSolidArea();}
+
 
     public String getCurrentDialogue(){
         return dialogue.getCurrentDialogueText();
@@ -153,6 +175,10 @@ public class GamePanel extends JPanel implements Runnable{
 
     public void setSwitchedForTheFirstTime(boolean switchedForTheFirstTime) {
         this.switchedForTheFirstTime = switchedForTheFirstTime;
+    }
+
+    public int getSolvingLabyrinth() {
+        return solvingLabyrinth;
     }
 
     public void setCanDraw() {
@@ -180,9 +206,7 @@ public class GamePanel extends JPanel implements Runnable{
         return gameStarted;
     }
 
-    public boolean isCollidingWithDoor(){
-        return player.isCollisionWithDoor();
-    }
+
     public void setGameState(int gameState) {
         this.gameState = gameState;
     }
@@ -285,13 +309,6 @@ public class GamePanel extends JPanel implements Runnable{
         horrorPuzzle.setWalking(walking);
     }
 
-    public Rectangle getHorrorPuzzleCollision(){
-        return horrorPuzzle.getSolidArea();
-    }
-
-    public boolean playerCollidingWithHorrorGame(){
-        return player.isCollisionWithHorrorGame();
-    }
 
     public boolean isHorrorGameWon(){
         return horrorPuzzle.isGameWon();
@@ -302,4 +319,34 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
 
+    public void setClicked(int col, int row){
+        labyrinth.setNodeClicked(col,row);
+        repaint();
+    }
+
+    public void setKeys() {
+        this.keys++;
+    }
+
+    public boolean labyrinthFinished(){
+        return labyrinth.isGameFinished();
+    }
+
+    public boolean horrorGameFinished(){
+        return horrorPuzzle.isGameWon();
+    }
+
+    public boolean serverPuzzleFinished(){
+        return puzzleOne.isPuzzleSolved();
+    }
+
+    public boolean collidingWithLabyrinth(){
+        return player.isCollisionWithLabyrinth();
+    }
+    public boolean collidingWithHorrorGame(){
+        return player.isCollisionWithHorrorGame();
+    }
+    public boolean collidingWithServerGame(){
+        return player.isCollisionWithServerGame();
+    }
 }

@@ -7,19 +7,27 @@ import java.awt.*;
 public class Room {
 
     private final GamePanel gp;
-    private Rectangle solidArea;
+    private Rectangle serverSolidArea;
+    private Rectangle horrorGameSolidArea;
+    private Rectangle labyrinthSolidArea;
 
     public Room(GamePanel gp){
         this.gp = gp;
-        solidArea = new Rectangle(gp.getTileSize() * (gp.getMaxCol() - 2),gp.getTileSize() * (gp.getMaxRow() - 2),gp.getTileSize(),gp.getTileSize());
+        labyrinthSolidArea = new Rectangle(gp.getTileSize() * (gp.getMaxCol() - 2) + 10,gp.getTileSize() * 2,gp.getTileSize(),gp.getTileSize());
+        horrorGameSolidArea = new Rectangle(gp.getTileSize() * (gp.getMaxCol() - 2) + 10, gp.getTileSize() * 6, gp.getTileSize(), gp.getTileSize());
+        serverSolidArea = new Rectangle(gp.getTileSize() * (gp.getMaxCol() - 2) + 10,gp.getTileSize() * 10,gp.getTileSize(),gp.getTileSize());
+
     }
 
-    public void draw(Graphics2D g2){
-        g2.setColor(Color.RED);
-        g2.fillRect(solidArea.x,solidArea.y, solidArea.width, solidArea.height);
+    public Rectangle getServerSolidArea() {
+        return serverSolidArea;
     }
 
-    public Rectangle getSolidArea() {
-        return solidArea;
+    public Rectangle getHorrorGameSolidArea() {
+        return horrorGameSolidArea;
+    }
+
+    public Rectangle getLabyrinthSolidArea() {
+        return labyrinthSolidArea;
     }
 }

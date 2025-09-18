@@ -111,6 +111,7 @@ public class HorrorPuzzle {
             if(endingTimer >= 120){
                 gameWon = true;
                 gp.setGameState(gp.getControllingRobot());
+                gp.setKeys();
             }
         }
         if(state == playing){

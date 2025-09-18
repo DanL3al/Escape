@@ -40,6 +40,7 @@ public class PuzzleOne {
     public void update(){
         if(server.getHeat() >= server.getMaxHeat()){
             this.puzzleSolved = true;
+            gp.setKeys();
             gp.setGameState(gp.getControllingRobot());
         }
         if(gp.getHealth() == 0){
@@ -51,6 +52,10 @@ public class PuzzleOne {
         server.update();
         cookieManager.update();
 
+    }
+
+    public boolean isPuzzleSolved() {
+        return puzzleSolved;
     }
 
     public void setShield(boolean shieldUp){
@@ -164,7 +169,7 @@ class Robot {
     public Robot(GamePanel gp){
         this.gp = gp;
         this.x = gp.getTileSize() * (gp.getMaxCol() - 4);
-        this.y = gp.getTileSize() * (gp.getMaxRow() - 4) - 24;
+        this.y = gp.getTileSize() * (gp.getMaxRow() - 4) + 10;
         this.width = gp.getTileSize() * 4;
         this.height = gp.getTileSize() * 4;
         this.solidArea = new Rectangle(x + gp.getTileSize(),y + gp.getTileSize(),width,height);

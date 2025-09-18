@@ -2,6 +2,7 @@ package entity;
 
 import frame.GamePanel;
 import tutorialButtons.E;
+import tutorialButtons.T;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -32,13 +33,15 @@ public class Player {
     /*GAME LOGIC VARIABLES*/
     private boolean controllingRobot = false;
     private final E E;
+    private final T T;
 
     /*COLLISION VARIABLES*/
     private Rectangle solidArea;
 
+    private boolean collisionWithServerGame = false;
+    private boolean collisionWithLabyrinth = false;
     private boolean collisionWithHorrorGame = false;
 
-    private boolean collisionWithDoor = false;
     private int solidAreaDefaultX, solidAreaDefaultY;
     private int solidAreaWidth, solidAreaHeight;
 
@@ -53,12 +56,22 @@ public class Player {
         this.gp = gp;
         setSolidArea();
         E = new E(gp);
+        T = new T(gp);
     }
 
     public void draw(Graphics2D g2){
 
         if(!gp.isSwitchedForTheFirstTime() && gp.isCanDraw()){
             E.draw(g2,x,y);
+        }
+        if(collisionWithServerGame && !gp.serverPuzzleFinished()){
+            T.draw(g2, x, y);
+        }
+        else if(collisionWithLabyrinth && !gp.labyrinthFinished()){
+            T.draw(g2, x, y);
+        }
+        if(collisionWithHorrorGame && !gp.isHorrorGameWon()){
+            T.draw(g2, x, y);
         }
 
         /*Logic for drawing the robot's movement*/
@@ -106,10 +119,12 @@ public class Player {
 
         if(!gp.isSwitchedForTheFirstTime() && gp.isCanDraw()){
             E.update();
+        }if(collisionWithServerGame || collisionWithLabyrinth || collisionWithHorrorGame){
+            T.update();
         }
-
+        collisionWithLabyrinth = false;
+        collisionWithServerGame = false;
         collisionWithHorrorGame = false;
-        collisionWithDoor = false;
         checkCollision();
 
 
@@ -157,14 +172,13 @@ public class Player {
         this.solidArea.x = x + gp.getTileSize() / 4;
         this.solidArea.y = y + gp.getTileSize() / 4;
 
-        if(solidArea.intersects(gp.getRoomSolidArea())){
-            collisionWithDoor = true;
-        }if(solidArea.intersects(gp.getHorrorPuzzleCollision())){
+        if(solidArea.intersects(gp.getServerPuzzleSolidArea())){
+            collisionWithServerGame = true;
+        }if(solidArea.intersects(gp.getHorrorPuzzleSolidArea())){
             collisionWithHorrorGame = true;
+        }if(solidArea.intersects(gp.getLabyrinthSolidArea())){
+            collisionWithLabyrinth = true;
         }
-
-        this.solidArea.x = solidAreaDefaultX;
-        this.solidArea.y = solidAreaDefaultY;
     }
 
 
@@ -210,9 +224,6 @@ public class Player {
         return speed;
     }
 
-    public boolean isCollisionWithDoor() {
-        return collisionWithDoor;
-    }
 
     public String getDirection() {
         return direction;
@@ -228,5 +239,13 @@ public class Player {
 
     public boolean isCollisionWithHorrorGame() {
         return collisionWithHorrorGame;
+    }
+
+    public boolean isCollisionWithServerGame() {
+        return collisionWithServerGame;
+    }
+
+    public boolean isCollisionWithLabyrinth() {
+        return collisionWithLabyrinth;
     }
 }

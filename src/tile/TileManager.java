@@ -34,11 +34,16 @@ public class TileManager {
 
         Tile[] current;
 
-        if(gp.getGameState() == gp.getGameStarted() || gp.getGameState() == gp.getStealth()){
-            current = doorClosedStealth;
+        if(gp.isDoorOpen()){
+            current = doorOpenControlling;
         }else{
-            current = doorClosedControlling;
+            if(gp.getGameState() == gp.getStealth()){
+                current = doorClosedStealth;
+            }else{
+                current = doorClosedControlling;
+            }
         }
+
 
         while(col < gp.getMaxCol() && row < gp.getMaxRow()){
             g2.drawImage(current[mapTileNum[col][row]].getImage(),x,y,gp.getTileSize(),gp.getTileSize(),null);

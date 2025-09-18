@@ -36,11 +36,17 @@ public class KeyHandler implements KeyListener {
                 resetCoordinates();
             }
             else if(e.getKeyCode() == KeyEvent.VK_T){
-                if(gp.isCollidingWithDoor()){
-                    gp.setGameState(gp.getShowingPuzzleObjective());
-                }if(gp.playerCollidingWithHorrorGame()){
+                if(gp.collidingWithLabyrinth()){
+                    if(!gp.labyrinthFinished()){
+                        gp.setGameState(gp.getSolvingLabyrinth());
+                    }
+                }else if(gp.collidingWithHorrorGame()){
                     if(!gp.isHorrorGameWon()){
                         gp.setGameState(gp.getSolvingHorrorPuzzle());
+                    }
+                }else if(gp.collidingWithServerGame()){
+                    if(!gp.serverPuzzleFinished()){
+                        gp.setGameState(gp.getShowingPuzzleObjective());
                     }
                 }
             }

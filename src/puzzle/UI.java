@@ -15,6 +15,8 @@ public class UI {
     //DIALOGUES VARIABLES
     private BufferedImage talkIconOne, talkIconPc;
 
+    private BufferedImage handleOff,handleOn;
+
     private final Color opaqueBlack = new Color(0,0,0,220);
     private final Color borderColor = new Color(255,255,255);
 
@@ -61,6 +63,28 @@ public class UI {
         g2.setColor(Color.WHITE);
         g2.drawString(String.valueOf(current), gp.getTileSize() * 3,gp.getMaxCol() * gp.getTileSize() / 2);
     }
+
+    public void drawHandle(Graphics2D g2){
+        if(!gp.labyrinthFinished()){
+            g2.drawImage(handleOff, gp.getTileSize() * (gp.getMaxCol() - 1) - 10, gp.getTileSize() * 2, gp.getTileSize(), gp.getTileSize(),null);
+        }else{
+            g2.drawImage(handleOn, gp.getTileSize() * (gp.getMaxCol() - 1) - 10, gp.getTileSize() * 2, gp.getTileSize(), gp.getTileSize(),null);
+        }
+
+        if(!gp.isHorrorGameWon()){
+            g2.drawImage(handleOff, gp.getTileSize() * (gp.getMaxCol() - 1) - 10, gp.getTileSize() * 6, gp.getTileSize(), gp.getTileSize(),null);
+        }else{
+            g2.drawImage(handleOn, gp.getTileSize() * (gp.getMaxCol() - 1) - 10, gp.getTileSize() * 6, gp.getTileSize(), gp.getTileSize(),null);
+        }
+
+        if(!gp.serverPuzzleFinished()){
+            g2.drawImage(handleOff, gp.getTileSize() * (gp.getMaxCol() - 1) - 10, gp.getTileSize() * 10, gp.getTileSize(), gp.getTileSize(),null);
+        }else{
+            g2.drawImage(handleOn, gp.getTileSize() * (gp.getMaxCol() - 1) - 10, gp.getTileSize() * 10, gp.getTileSize(), gp.getTileSize(),null);
+        }
+
+    }
+
 
     public void draw(Graphics2D g2){
         BufferedImage currentImage = null;
@@ -207,6 +231,9 @@ public class UI {
             four = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/four.png")));
             five = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/five.png")));
             six = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("puzzleOneAssets/six.png")));
+
+            handleOff = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("doorHandleAssets/handle-off.png")));
+            handleOn = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("doorHandleAssets/handle-on.png")));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
