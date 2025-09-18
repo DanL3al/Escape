@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="flatlaf-3.4.1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/src/libs/flatlaf-3.4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/libs/jlayer-1.0.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/libs/mp3spi-1.9.5-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/src/libs/tritonus_share-20041204.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
