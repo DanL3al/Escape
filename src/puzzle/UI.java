@@ -85,6 +85,13 @@ public class UI {
 
     }
 
+    public void drawEndingScreen(Graphics2D g2){
+        g2.setColor(Color.black);
+        g2.fillRect(0,0,gp.getWidth(),gp.getHeight());
+        g2.setColor(Color.white);
+        g2.drawString("Você escapou", gp.getTileSize() * (gp.getMaxCol() / 2) - gp.getTileSize(), gp.getTileSize() * (gp.getMaxRow() / 2) - 20);
+    }
+
 
     public void draw(Graphics2D g2){
         BufferedImage currentImage = null;
@@ -238,4 +245,6 @@ public class UI {
             throw new RuntimeException(e);
         }
     }
+
+
 }

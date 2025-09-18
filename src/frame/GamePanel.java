@@ -60,7 +60,7 @@ public class GamePanel extends JPanel implements Runnable{
     private int gameStartedTimer = 0;
 
     private int keys = 0;
-
+    private int endingTimer = 0;
 
 
     public GamePanel(){
@@ -94,6 +94,12 @@ public class GamePanel extends JPanel implements Runnable{
         }
     }
     public void update(){
+        if(keys == 3){
+            doorOpen = true;
+        }
+        if(doorOpen){
+            endingTimer++;
+        }
         if(gameState == gameStarted){
             gameStartedTimer++;
         }else if(gameState == solvingLabyrinth){
@@ -115,9 +121,8 @@ public class GamePanel extends JPanel implements Runnable{
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        if(keys == 3){
-            doorOpen = true;
-        }
+
+
         if(gameState == gameStarted){
             tileManager.draw(g2);
             player.draw(g2);
@@ -149,6 +154,13 @@ public class GamePanel extends JPanel implements Runnable{
             player.draw(g2);
 
         }
+
+
+        if(endingTimer >= 120){
+            ui.drawEndingScreen(g2);
+        }
+
+
         g2.dispose();
     }
 
