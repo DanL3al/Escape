@@ -8,6 +8,7 @@ public class Sound {
 
     Clip clip;
     URL soundURL[] = new URL[30];
+    private long lastPosition;
 
     public Sound() {
         soundURL[0] = getClass().getResource("/sound/songs/game.mp3");
@@ -67,6 +68,20 @@ public class Sound {
             float range = gainControl.getMaximum() - gainControl.getMinimum();
             float gain = (range * volume) + gainControl.getMinimum();
             gainControl.setValue(gain);
+        }
+    }
+
+    public void pause() {
+        if (clip != null && clip.isRunning()) {
+            this.lastPosition = clip.getMicrosecondPosition();
+            clip.stop();
+        }
+    }
+
+    public void resume() {
+        if (clip != null && !clip.isRunning()) {
+            clip.setMicrosecondPosition(this.lastPosition);
+            clip.start();
         }
     }
 }

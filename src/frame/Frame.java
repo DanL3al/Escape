@@ -37,6 +37,11 @@ public class Frame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 optionsPanel.setVisible(!optionsPanel.isVisible());
+                if(optionsPanel.isVisible()){
+                    gp.setGamePause(true);
+                } else {
+                    gp.setGamePause(false);
+                }
             }
         });
     }
