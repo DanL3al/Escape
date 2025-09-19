@@ -9,6 +9,7 @@ import handler.KeyHandler;
 import puzzle.UI;
 import puzzle.labyrinth.Labyrinth;
 import room.Room;
+import sound.Sound;
 import tile.TileManager;
 
 import javax.swing.*;
@@ -27,6 +28,8 @@ public class GamePanel extends JPanel implements Runnable{
     private final int screenHeight = tileSize * maxRow;
 
     /*Object Variables*/
+    private final Sound music = new Sound();
+    private final Sound se = new Sound();
     private Thread thread;
     private final KeyHandler keyH = new KeyHandler(this);
     private final Player player = new Player(this);
@@ -41,6 +44,8 @@ public class GamePanel extends JPanel implements Runnable{
 
 
     /*Game Logic Variables*/
+
+    private int currentMusic = -1;
     private int gameState;
     private final int controllingRobot = 1;
     private final int gameStarted = 6;
@@ -61,7 +66,6 @@ public class GamePanel extends JPanel implements Runnable{
 
     private int keys = 0;
     private int endingTimer = 0;
-
 
     public GamePanel(){
         this.gameState = gameStarted;
@@ -164,6 +168,24 @@ public class GamePanel extends JPanel implements Runnable{
         g2.dispose();
     }
 
+    public void playMusic(int i) {
+        music.setFile(i);
+        music.play();
+        music.loop();
+        music.setVolume(0.6f);
+        currentMusic = i;
+    }
+
+    public void stopMusic() {
+        music.stop();
+        currentMusic = -1;
+    }
+
+    public void playSE(int i) {
+        se.setFile(i);
+        se.play();
+    }
+
     /*MAIN LOGIC GETTERS AND SETTERS*/
     public Rectangle getServerPuzzleSolidArea(){
         return room.getServerSolidArea();
@@ -219,9 +241,34 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
 
-    public void setGameState(int gameState) {
-        this.gameState = gameState;
+    public void setGameState(int newGameState) {
+        if (this.gameState == newGameState) {
+            return;
+        }
+
+        int requiredMusic;
+        switch (newGameState) {
+            case solvingHorrorPuzzle:
+                requiredMusic = 1;
+                break;
+            case solvingPuzzle:
+                requiredMusic = 2;
+                break;
+            case solvingLabyrinth:
+                requiredMusic = 3;
+                break;
+            default:
+                requiredMusic = 0;
+                break;
+        }
+
+        if (currentMusic != requiredMusic) {
+            stopMusic();
+            playMusic(requiredMusic);
+        }
+        this.gameState = newGameState;
     }
+
     public int getGameState() {
         return gameState;
     }
