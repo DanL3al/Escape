@@ -16,7 +16,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class GamePanel extends JPanel implements Runnable{
+public class GamePanel extends JPanel implements Runnable {
 
     /*Panel Dimension's Variables*/
     private final int originalTileSize = 24;
@@ -44,7 +44,7 @@ public class GamePanel extends JPanel implements Runnable{
 
 
     /*Game Logic Variables*/
-
+    public boolean gamePause;
     private int currentMusic = -1;
     private int gameState;
     private final int controllingRobot = 1;
@@ -67,92 +67,101 @@ public class GamePanel extends JPanel implements Runnable{
     private int keys = 0;
     private int endingTimer = 0;
 
-    public GamePanel(){
+    public GamePanel() {
         this.gameState = gameStarted;
-        this.setPreferredSize(new Dimension(screenWidth,screenHeight));
+        this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.green);
         this.setFocusable(true);
         this.addKeyListener(this.keyH);
         this.addMouseListener(this.mouseHandler);
     }
-    public void startGameThread(){
+
+    public void startGameThread() {
         this.thread = new Thread(this);
         thread.start();
     }
+
     @Override
     public void run() {
         int FPS = 60;
-        double drawInterval = 1000000000f/FPS;
+        double drawInterval = 1000000000f / FPS;
         double delta = 0;
         long lastTime = System.nanoTime();
         long currentTime;
-        while (thread != null){
+        while (thread != null) {
             currentTime = System.nanoTime();
             delta += (currentTime - lastTime) / drawInterval;
             lastTime = currentTime;
-            if(delta >= 1){
+            if (delta >= 1) {
                 update();
                 repaint();
                 delta--;
             }
         }
     }
-    public void update(){
-        if(keys == 3){
-            doorOpen = true;
-        }
-        if(doorOpen){
-            endingTimer++;
-        }
-        if(gameState == gameStarted){
-            gameStartedTimer++;
-        }else if(gameState == solvingLabyrinth){
-            labyrinth.update();
-        }
-        else if(gameState == solvingPuzzle){
-            puzzleOne.update();
-            ui.update();
-        }else if(gameState == solvingHorrorPuzzle){
-            horrorPuzzle.update();
-        }
-        else if(gameState == showingPuzzleObjective){
-            ui.update();
-        }
-        else{
-            player.update(keyH.isUp(),keyH.isDown(),keyH.isLeft(),keyH.isRight());
+
+    public void setGamePause(boolean isPaused) {
+        this.gamePause = isPaused;
+
+        if (isPaused) {
+            music.pause();
+        } else {
+            music.resume();
         }
     }
-    public void paintComponent(Graphics g){
+
+    public void update() {
+        if (gamePause) {
+            return;
+        }
+        if (keys == 3) {
+            doorOpen = true;
+        }
+        if (doorOpen) {
+            endingTimer++;
+        }
+        if (gameState == gameStarted) {
+            gameStartedTimer++;
+        } else if (gameState == solvingLabyrinth) {
+            labyrinth.update();
+        } else if (gameState == solvingPuzzle) {
+            puzzleOne.update();
+            ui.update();
+        } else if (gameState == solvingHorrorPuzzle) {
+            horrorPuzzle.update();
+        } else if (gameState == showingPuzzleObjective) {
+            ui.update();
+        } else {
+            player.update(keyH.isUp(), keyH.isDown(), keyH.isLeft(), keyH.isRight());
+        }
+    }
+
+    public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
 
-        if(gameState == gameStarted){
+        if (gameState == gameStarted) {
             tileManager.draw(g2);
             player.draw(g2);
             if (gameStartedTimer >= 60) {
                 ui.drawDialogue(g2);
                 showedFirstDialogue = true;
             }
-        }
-        else if(gameState == solvingLabyrinth){
+        } else if (gameState == solvingLabyrinth) {
             labyrinth.draw(g2);
-        }
-        else if(gameState == showingPuzzleObjective){
+        } else if (gameState == showingPuzzleObjective) {
             ui.robotServerBlackScreenDraw(g2);
-        }
-        else if(gameState == solvingHorrorPuzzle){
+        } else if (gameState == solvingHorrorPuzzle) {
             horrorPuzzle.draw(g2);
-        }
-        else if(gameState == solvingPuzzle){
+        } else if (gameState == solvingPuzzle) {
             puzzleOne.draw(g2);
             ui.draw(g2);
-        }else if(gameState == interacting){
+        } else if (gameState == interacting) {
             tileManager.draw(g2);
             player.draw(g2);
             ui.drawDialogue(g2);
-        }
-        else{
+        } else {
             tileManager.draw(g2);
             ui.drawHandle(g2);
             player.draw(g2);
@@ -160,7 +169,7 @@ public class GamePanel extends JPanel implements Runnable{
         }
 
 
-        if(endingTimer >= 120){
+        if (endingTimer >= 120) {
             ui.drawEndingScreen(g2);
         }
 
@@ -187,7 +196,7 @@ public class GamePanel extends JPanel implements Runnable{
     }
 
     /*MAIN LOGIC GETTERS AND SETTERS*/
-    public Rectangle getServerPuzzleSolidArea(){
+    public Rectangle getServerPuzzleSolidArea() {
         return room.getServerSolidArea();
     }
 
@@ -195,11 +204,16 @@ public class GamePanel extends JPanel implements Runnable{
         return doorOpen;
     }
 
-    public Rectangle getHorrorPuzzleSolidArea(){return room.getHorrorGameSolidArea();}
-    public Rectangle getLabyrinthSolidArea(){return room.getLabyrinthSolidArea();}
+    public Rectangle getHorrorPuzzleSolidArea() {
+        return room.getHorrorGameSolidArea();
+    }
+
+    public Rectangle getLabyrinthSolidArea() {
+        return room.getLabyrinthSolidArea();
+    }
 
 
-    public String getCurrentDialogue(){
+    public String getCurrentDialogue() {
         return dialogue.getCurrentDialogueText();
     }
 
@@ -227,7 +241,7 @@ public class GamePanel extends JPanel implements Runnable{
         return showedFirstDialogue;
     }
 
-    public boolean getTile(int num){
+    public boolean getTile(int num) {
         return tileManager.getDoorClosedControlling(num);
     }
 
@@ -272,15 +286,19 @@ public class GamePanel extends JPanel implements Runnable{
     public int getGameState() {
         return gameState;
     }
+
     public int getControllingRobot() {
         return controllingRobot;
     }
+
     public int getStealth() {
         return stealth;
     }
+
     public int getSolvingPuzzle() {
         return solvingPuzzle;
     }
+
     public int getShowingPuzzleObjective() {
         return showingPuzzleObjective;
     }
@@ -292,94 +310,113 @@ public class GamePanel extends JPanel implements Runnable{
     public int getTileSize() {
         return tileSize;
     }
-    public void setControllingRobot(boolean controlling){
+
+    public void setControllingRobot(boolean controlling) {
         player.setControllingRobot(controlling);
     }
+
     public int getMaxCol() {
         return maxCol;
     }
+
     public int getMaxRow() {
         return maxRow;
     }
 
     /*ROBOT VS SERVER PUZZLE VARIABLES*/
-    public void setShieldUp(boolean shieldUp){
+    public void setShieldUp(boolean shieldUp) {
         puzzleOne.setShield(shieldUp);
     }
-    public boolean getShieldUp(){
+
+    public boolean getShieldUp() {
         return puzzleOne.isShieldUp();
     }
-    public void createCookie(){
+
+    public void createCookie() {
         puzzleOne.createCookie();
     }
-    public Rectangle getRobotShieldArea(){
+
+    public Rectangle getRobotShieldArea() {
         return puzzleOne.robotShieldArea();
     }
-    public Rectangle getRobotArea(){
+
+    public Rectangle getRobotArea() {
         return puzzleOne.robotArea();
     }
-    public int getServerX(){
+
+    public int getServerX() {
         return puzzleOne.getServerX();
     }
-    public int getServerY(){
+
+    public int getServerY() {
         return puzzleOne.getServerY();
     }
-    public BufferedImage getCookieImage(){
+
+    public BufferedImage getCookieImage() {
         return puzzleOne.getCookieImage();
     }
-    public BufferedImage getShieldImage(){
+
+    public BufferedImage getShieldImage() {
         return puzzleOne.getShieldImage();
     }
-    public int getCookiesRemaining(){
+
+    public int getCookiesRemaining() {
         return puzzleOne.getCookiesRemaining();
     }
-    public boolean robotCanThrow(){
+
+    public boolean robotCanThrow() {
         return puzzleOne.getRobotCanThrow();
     }
-    public void setRobotCookiesRemaining(){
+
+    public void setRobotCookiesRemaining() {
         puzzleOne.setRobotCookiesRemaining();
     }
-    public void setServerHeat(){
+
+    public void setServerHeat() {
         puzzleOne.setServerHeat();
     }
-    public void setHealth(){
+
+    public void setHealth() {
         puzzleOne.setHealth();
     }
-    public int getHealth(){
+
+    public int getHealth() {
         return puzzleOne.getHealth();
     }
-    public BufferedImage getHeartImage(){
+
+    public BufferedImage getHeartImage() {
         return puzzleOne.getHeart();
     }
-    public BufferedImage getCurrentHeatImage(){
+
+    public BufferedImage getCurrentHeatImage() {
         return puzzleOne.getCurrentHeatImage();
     }
 
     /*Horror puzzle getters and setters*/
-    public void setFlashlight(boolean on){
+    public void setFlashlight(boolean on) {
         horrorPuzzle.setFlashlightOn(on);
     }
 
-    public boolean isFlashlightOn(){
+    public boolean isFlashlightOn() {
         return horrorPuzzle.isFlashlightOn();
     }
 
-    public void setWalking(boolean walking){
+    public void setWalking(boolean walking) {
         horrorPuzzle.setWalking(walking);
     }
 
 
-    public boolean isHorrorGameWon(){
+    public boolean isHorrorGameWon() {
         return horrorPuzzle.isGameWon();
     }
 
     public int getMapTileNum(int col, int row) {
-        return tileManager.getMapTileNum(col,row);
+        return tileManager.getMapTileNum(col, row);
     }
 
 
-    public void setClicked(int col, int row){
-        labyrinth.setNodeClicked(col,row);
+    public void setClicked(int col, int row) {
+        labyrinth.setNodeClicked(col, row);
         repaint();
     }
 
@@ -387,25 +424,27 @@ public class GamePanel extends JPanel implements Runnable{
         this.keys++;
     }
 
-    public boolean labyrinthFinished(){
+    public boolean labyrinthFinished() {
         return labyrinth.isGameFinished();
     }
 
-    public boolean horrorGameFinished(){
+    public boolean horrorGameFinished() {
         return horrorPuzzle.isGameWon();
     }
 
-    public boolean serverPuzzleFinished(){
+    public boolean serverPuzzleFinished() {
         return puzzleOne.isPuzzleSolved();
     }
 
-    public boolean collidingWithLabyrinth(){
+    public boolean collidingWithLabyrinth() {
         return player.isCollisionWithLabyrinth();
     }
-    public boolean collidingWithHorrorGame(){
+
+    public boolean collidingWithHorrorGame() {
         return player.isCollisionWithHorrorGame();
     }
-    public boolean collidingWithServerGame(){
+
+    public boolean collidingWithServerGame() {
         return player.isCollisionWithServerGame();
     }
 }
