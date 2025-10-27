@@ -2,7 +2,7 @@
 
 ### Um Desafio de Lógica e Agilidade Desenvolvido em Java
 
-O projeto Escape é fruto de um trabalho academico, onde o objetivo era simples. Criar no minimo 2 janelas, colocar 20 componentes swing e usar 4 metodos. Porém meu grupo foi além e pensamos em aprimorar esse projeto, divemos muitas ideias boas para o jogo porém por conter um curto prazo para entrega tivemos que abandonar por enquanto o desenvolvimento dessas ideias.
+O projeto Escape é fruto de um trabalho academico, onde o objetivo era simples. Criar no minimo 2 janelas, colocar 20 componentes swing e usar 4 metodos. Porém meu grupo foi além e pensamos em aprimorar esse projeto, tivemos muitas ideias boas para o jogo porém por conter um curto prazo para entrega tivemos que abandonar por enquanto o desenvolvimento dessas ideias.
 
 ## Visão do Projeto
 
@@ -107,7 +107,7 @@ A maior lição, portanto, foi dupla: por um lado, a paixão nos impulsionou a i
 
   * Um agradecimento especial ao professor **Paulo**, por nos conceder a liberdade criativa para transformar um requisito acadêmico em um projeto que nos orgulhamos de apresentar.
 
-## Contribuentes
+## Contribuintes
 Este projeto foi idealizado e desenvolvido por uma equipe dedicada de estudantes.
 
 * Andrey Cadmo Marques de Oliveira 
